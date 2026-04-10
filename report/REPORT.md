@@ -125,10 +125,10 @@ Chạy cả 3 chunker trên cùng 5 benchmark queries với cùng OpenAI `text-e
 | Nguyễn Đông Hưng (Tôi) | RecursiveChunker(500) | OpenAI text-embedding-3-small | In-memory | **100%** (5/5) | **100%** (5/5) |
 | Khuất Văn Vương | RecursiveChunker(500) | Qwen 0.8B (local) | ChromaDB | **95.2%** | **100%** |
 | Lưu Lương Vi Nhân | Recursive(400) | all-MiniLM-L6-v2 | ChromaDB | **66.8%** | **100%** |
-| Huỳnh Văn Nghĩa | SentenceChunker(500) | GPT-4o-mini | ChromaDB | **9.5%** | **100%** |
+| Huỳnh Văn Nghĩa | SentenceChunker(500) | GPT-4o-mini | ChromaDB | **20%** | **100%** |
 
 **Strategy nào tốt nhất cho domain này? Tại sao?**
-> Trong thí nghiệm này, sự khác biệt về embedding model tạo ra chênh lệch precision lớn nhất: cùng RecursiveChunker nhưng OpenAI đạt 100%, Qwen 0.8B đạt 95.2%, MiniLM đạt 66.8%. Tuy nhiên, điều này **không có nghĩa embedding model quan trọng hơn chunking strategy nói chung** — vì tất cả thành viên đều đã dùng chunking hợp lý (Recursive/Sentence), tạo nền tảng context sạch. Trong thực tế, **chunking strategy là nền tảng quyết định chất lượng ngữ cảnh** — chunk xấu thì embedding mạnh đến mấy cũng không cứu được. **Metadata Filter là "lưới an toàn" cực kỳ hiệu quả** — kéo tất cả cấu hình lên 100%, kể cả trường hợp Nghĩa chỉ đạt 9.5% khi không filter. Đối với domain y tế, kết hợp chunking tốt (RecursiveChunker giữ nguyên cấu trúc section) + metadata filtering là lựa chọn tối ưu.
+> Trong thí nghiệm này, sự khác biệt về embedding model tạo ra chênh lệch precision lớn nhất: cùng RecursiveChunker nhưng OpenAI đạt 100%, Qwen 0.8B đạt 95.2%, MiniLM đạt 66.8%. Tuy nhiên, điều này **không có nghĩa embedding model quan trọng hơn chunking strategy nói chung** — vì tất cả thành viên đều đã dùng chunking hợp lý (Recursive/Sentence), tạo nền tảng context sạch. Trong thực tế, **chunking strategy là nền tảng quyết định chất lượng ngữ cảnh** — chunk xấu thì embedding mạnh đến mấy cũng không cứu được. **Metadata Filter là "lưới an toàn" cực kỳ hiệu quả** — kéo tất cả cấu hình lên 100%, kể cả trường hợp Nghĩa chỉ đạt 20% khi không filter. Đối với domain y tế, kết hợp chunking tốt (RecursiveChunker giữ nguyên cấu trúc section) + metadata filtering là lựa chọn tối ưu.
 
 ---
 
@@ -260,7 +260,7 @@ Cấu hình: RecursiveChunker(500) + OpenAI text-embedding-3-small + In-memory s
 3/5 queries (Q2, Q4, Q5) sử dụng `search_with_filter()` với metadata `category`:
 
 - **Cá nhân:** Filter không thay đổi precision (vẫn 100%) nhưng giúp tăng relevance score bằng cách loại chunks ngoài chuyên khoa — đặc biệt hiệu quả với Q5 (query chung chung dễ match cross-domain).
-- **Nhóm:** Filter là yếu tố quyết định khi embedding model yếu — kéo precision từ 9.5% → 100% (Huỳnh Văn Nghĩa), 66.8% → 100% (Lưu Lương Vi Nhân). Chi tiết tại bảng so sánh nhóm ở Section 3.
+- **Nhóm:** Filter là yếu tố quyết định khi embedding model yếu — kéo precision từ 20% → 100% (Huỳnh Văn Nghĩa), 66.8% → 100% (Lưu Lương Vi Nhân). Chi tiết tại bảng so sánh nhóm ở Section 3.
 
 > So sánh `search()` vs `search_with_filter()`: với embedding model mạnh (OpenAI), filter chủ yếu cải thiện Top-2/3 relevance. Với model yếu, filter là "lưới an toàn" bắt buộc.
 
@@ -273,7 +273,7 @@ Cấu hình: RecursiveChunker(500) + OpenAI text-embedding-3-small + In-memory s
 ## 7. What I Learned (5 điểm — Demo)
 
 **Điều hay nhất tôi học được từ thành viên khác trong nhóm:**
-> Từ kết quả của Nghĩa (GPT-4o-mini, precision 9.5% → 100% khi có filter), tôi nhận ra rằng **Metadata Filter không chỉ là "nice-to-have" mà là thành phần sống còn** khi embedding model không đủ mạnh cho tiếng Việt chuyên ngành. Kết quả của Vương (Qwen 0.8B local, 95.2%) cũng cho thấy model nhỏ chạy local hoàn toàn khả thi cho RAG tiếng Việt nếu kết hợp đúng strategy.
+> Từ kết quả của Nghĩa (GPT-4o-mini, precision 20% → 100% khi có filter), tôi nhận ra rằng **Metadata Filter không chỉ là "nice-to-have" mà là thành phần sống còn** khi embedding model không đủ mạnh cho tiếng Việt chuyên ngành. Kết quả của Vương (Qwen 0.8B local, 95.2%) cũng cho thấy model nhỏ chạy local hoàn toàn khả thi cho RAG tiếng Việt nếu kết hợp đúng strategy.
 
 **Điều hay nhất tôi học được từ nhóm khác (qua demo):**
 > Qua quá trình thảo luận, tôi nhận ra tầm quan trọng của việc **clean data trước khi embedding** — dữ liệu y tế gốc chứa nhiều HTML tags, breadcrumbs, và quảng cáo footer. Nếu không loại bỏ, các thông tin rác này sẽ "nhiễm" vào embedding và làm giảm chất lượng retrieval.
