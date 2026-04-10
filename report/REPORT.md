@@ -1,6 +1,7 @@
 # Báo Cáo Lab 7: Embedding & Vector Store
 
-**Họ tên:** Nguyễn Bình Hưng
+**Họ tên:** Nguyễn Đông Hưng
+**MSSV:** 2A202600392
 **Nhóm:** Nhóm 69
 **Ngày:** 2026-04-10
 
@@ -115,13 +116,13 @@ Chạy cả 3 chunker trên cùng 5 benchmark queries với cùng OpenAI `text-e
 | **Wins** | 1/5 | **3/5** 🏆 | 1/5 | |
 | **Hits** | 5/5 | 5/5 | 5/5 | |
 
-**Nhận xét:** Cả 3 estrategy đều đạt 5/5 hits (tìm đúng tài liệu nguồn) vì OpenAI embedding đã đủ mạnh. Tuy nhiên, **SentenceChunker cho similarity score trung bình cao nhất** (0.6835) vì nó giữ nguyên ranh giới câu — mỗi chunk là một đơn vị ngữ nghĩa hoàn chỉnh.
+**Nhận xét:** Cả 3 strategy đều đạt 5/5 hits (tìm đúng tài liệu nguồn) vì OpenAI embedding đã đủ mạnh. Tuy nhiên, **SentenceChunker cho similarity score trung bình cao nhất** (0.6835) vì nó giữ nguyên ranh giới câu — mỗi chunk là một đơn vị ngữ nghĩa hoàn chỉnh.
 
 ### So Sánh Với Thành Viên Khác
 
 | Thành viên | Strategy | Embedding Model | Vector DB | Precision (no filter) | Precision (filtered) |
 |-----------|----------|-----------------|-----------|----------------------|---------------------|
-| Nguyễn Bình Hưng (Tôi) | RecursiveChunker(500) | OpenAI text-embedding-3-small | In-memory | **100%** (5/5) | **100%** (5/5) |
+| Nguyễn Đông Hưng (Tôi) | RecursiveChunker(500) | OpenAI text-embedding-3-small | In-memory | **100%** (5/5) | **100%** (5/5) |
 | Khuất Văn Vương | RecursiveChunker(500) | Qwen 0.8B (local) | ChromaDB | **95.2%** | **100%** |
 | Lưu Lương Vi Nhân | Recursive(400) | all-MiniLM-L6-v2 | ChromaDB | **66.8%** | **100%** |
 | Huỳnh Văn Nghĩa | SentenceChunker(500) | GPT-4o-mini | ChromaDB | **9.5%** | **100%** |
@@ -230,20 +231,20 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ### Benchmark Queries & Gold Answers (nhóm thống nhất)
 
-| # | Query | Gold Answer |
-|---|-------|-------------|
-| 1 | Bệnh Alzheimer được chẩn đoán chia giai đoạn theo thang điểm MMSE như thế nào? | Alzheimer nhẹ: MMSE 21-26, trung bình: 10-20, trung bình nặng: 10-14, nặng: dưới 10. |
-| 2 | Các biện pháp cận lâm sàng nào giúp đánh giá tình trạng mạch máu và tưới máu bàn chân ở người bệnh đái tháo đường? | Sử dụng các biện pháp đo ABI (Ankle Brachial Index) và đo TcPO2 (transcutaneous oxygen tension). |
-| 3 | Thời gian dùng kháng sinh điều trị áp xe phổi nguyên phát thường kéo dài bao lâu? | Thời gian dùng kháng sinh kéo dài từ 4 đến 6 tuần hoặc cho đến khi X-quang ngực sạch hoặc chỉ còn vết sẹo nhỏ. |
-| 4 | Nguyên nhân hàng đầu gây ra băng huyết sau sinh là gì? | Nguyên nhân hàng đầu (hay gặp nhất) gây băng huyết sau sinh là đờ tử cung. |
-| 5 | Ăn không tiêu thường xuyên có thể là dấu hiệu của những bệnh tiêu hóa nguy hiểm nào? | Viêm loét dạ dày, trào ngược dạ dày thực quản, viêm dạ dày, liệt dạ dày, thoát vị hoành, sỏi mật, viêm túi mật, viêm tụy, IBS, bệnh celiac, tắc ruột non, ung thư dạ dày. |
+| # | Query | Gold Answer | Chunk nguồn |
+|---|-------|-------------|-------------|
+| 1 | Bệnh Alzheimer được chẩn đoán chia giai đoạn theo thang điểm MMSE như thế nào? | Alzheimer nhẹ: MMSE 21-26, trung bình: 10-20, trung bình nặng: 10-14, nặng: dưới 10. | alzheimer.md — phần Chẩn đoán (Thang MMSE) |
+| 2 | Các biện pháp cận lâm sàng nào giúp đánh giá tình trạng mạch máu và tưới máu bàn chân ở người bệnh đái tháo đường? | Sử dụng các biện pháp đo ABI (Ankle Brachial Index) và đo TcPO2 (transcutaneous oxygen tension). | ban-chan-dai-thao-duong.md — phần Chẩn đoán cận lâm sàng |
+| 3 | Thời gian dùng kháng sinh điều trị áp xe phổi nguyên phát thường kéo dài bao lâu? | Thời gian dùng kháng sinh kéo dài từ 4 đến 6 tuần hoặc cho đến khi X-quang ngực sạch hoặc chỉ còn vết sẹo nhỏ. | ap-xe-phoi.md — phần Điều trị nội khoa |
+| 4 | Nguyên nhân hàng đầu gây ra băng huyết sau sinh là gì? | Nguyên nhân hàng đầu (hay gặp nhất) gây băng huyết sau sinh là đờ tử cung. | bang-huyet-sau-sinh.md — phần Nguyên nhân |
+| 5 | Ăn không tiêu thường xuyên có thể là dấu hiệu của những bệnh tiêu hóa nguy hiểm nào? | Viêm loét dạ dày, trào ngược dạ dày thực quản, viêm dạ dày, liệt dạ dày, thoát vị hoành, sỏi mật, viêm túi mật, viêm tụy, IBS, bệnh celiac, tắc ruột non, ung thư dạ dày. | an-khong-tieu.md — phần Nguyên nhân bệnh lý |
 
 ### Kết Quả Của Tôi
 
 Cấu hình: RecursiveChunker(500) + OpenAI text-embedding-3-small + In-memory store
 
-| # | Query | Top-1 Retrieved Chunk (tóm tắt) | Score | Relevant? | Agent Answer (tóm tắt) |
-|---|-------|--------------------------------|-------|-----------|------------------------|
+| # | Query | Top-1 Chunk (tóm tắt) | Top-1 Score | Top-3 Relevant? | Agent Answer (tóm tắt) |
+|---|-------|-----------------------|-------------|-----------------|------------------------|
 | 1 | Alzheimer MMSE | "Thang điểm MMSE có điểm cắt chẩn đoán sa sút trí tuệ là 26..." | 0.7558 | ✅ | Dựa trên 3 chunks: trích dẫn đúng thang MMSE |
 | 2 | Mạch máu bàn chân ĐTĐ (filter: Nội tiết) | "Các biện pháp cận lâm sàng giúp đánh giá tình trạng mạch máu, tưới máu bàn chân như: đo ABI..." | 0.7512 | ✅ | Trả đúng ABI và TcPO2 |
 | 3 | Kháng sinh áp xe phổi | "GS.TS.BS Ngô Quý Châu cho biết, có rất nhiều phương pháp điều trị áp-xe phổi khác nhau..." | 0.6764 | ✅ | Trích dẫn đúng 4-6 tuần |
@@ -251,6 +252,21 @@ Cấu hình: RecursiveChunker(500) + OpenAI text-embedding-3-small + In-memory s
 | 5 | Bệnh tiêu hóa nguy hiểm (filter: Tiêu hóa) | "Thường xuyên ăn không tiêu là bệnh gì? Nguyên nhân ăn không tiêu..." | 0.5661 | ✅ | Liệt kê các bệnh nguy hiểm |
 
 **Bao nhiêu queries trả về chunk relevant trong top-3?** 5 / 5
+
+**Top-3 Analysis:** Trong hầu hết các queries, Top-2 và Top-3 đến từ cùng tài liệu nguồn với Top-1 (các section lân cận trong cùng bài viết bệnh). Q1 nổi bật với cả 3 chunks đều directly relevant (chẩn đoán MMSE + phân loại giai đoạn + triệu chứng). Q5 có Top-2/3 chứa phần mục lục và triệu chứng chung — chỉ partially relevant.
+
+### Metadata Filter Impact
+
+3/5 queries (Q2, Q4, Q5) sử dụng `search_with_filter()` với metadata `category`:
+
+- **Cá nhân:** Filter không thay đổi precision (vẫn 100%) nhưng giúp tăng relevance score bằng cách loại chunks ngoài chuyên khoa — đặc biệt hiệu quả với Q5 (query chung chung dễ match cross-domain).
+- **Nhóm:** Filter là yếu tố quyết định khi embedding model yếu — kéo precision từ 9.5% → 100% (Huỳnh Văn Nghĩa), 66.8% → 100% (Lưu Lương Vi Nhân). Chi tiết tại bảng so sánh nhóm ở Section 3.
+
+> So sánh `search()` vs `search_with_filter()`: với embedding model mạnh (OpenAI), filter chủ yếu cải thiện Top-2/3 relevance. Với model yếu, filter là "lưới an toàn" bắt buộc.
+
+### So Sánh Kết Quả Trong Nhóm
+
+> Bảng so sánh chi tiết 4 thành viên (strategy, embedding model, vector DB, precision) tại **Section 3 — So Sánh Với Thành Viên Khác**. Kết luận: embedding model ảnh hưởng precision nhiều hơn chunking strategy, nhưng metadata filter san phẳng mọi khác biệt — đưa tất cả thành viên lên 100%.
 
 ---
 
@@ -277,14 +293,15 @@ Mặc dù Q5 trả về đúng document, nhưng **top-1 score chỉ 0.5661** —
 
 ## Tự Đánh Giá
 
-| Tiêu chí | Loại | Điểm tự đánh giá |
-|----------|------|-------------------|
+| Tiêu chí (theo SCORING.md) | Loại | Điểm tự đánh giá |
+|----------------------------|------|-------------------|
+| Core Implementation (tests) | Cá nhân | 30 / 30 |
+| My Approach | Cá nhân | 9 / 10 |
+| Competition Results | Cá nhân | 9 / 10 |
 | Warm-up | Cá nhân | 5 / 5 |
-| Document selection | Nhóm | 9 / 10 |
-| Chunking strategy | Nhóm | 13 / 15 |
-| My approach | Cá nhân | 9 / 10 |
-| Similarity predictions | Cá nhân | 4 / 5 |
-| Results | Cá nhân | 9 / 10 |
-| Core implementation (tests) | Cá nhân | 30 / 30 |
+| Similarity Predictions | Cá nhân | 4 / 5 |
+| Strategy Design | Nhóm | 13 / 15 |
+| Document Set Quality | Nhóm | 9 / 10 |
+| Retrieval Quality | Nhóm | 9 / 10 |
 | Demo | Nhóm | 4 / 5 |
-| **Tổng** | | **83 / 100** |
+| **Tổng** | | **92 / 100** |
